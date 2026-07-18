@@ -357,7 +357,127 @@
     $("summaryModal").classList.remove("open");
     openLesson(selected);
   });
+/* -------------------------------------------------
+   Living Book polish — append this to the END of
+   styles/maths-bridge.css
+-------------------------------------------------- */
 
-  updateStats();
+/* Keep the long French title inside the cover */
+.book-cover h1 {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: clamp(2.15rem, 4.2vw, 3.55rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+/* Give the cover a little more breathing room */
+.book-cover {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.book-subtitle {
+  max-width: 310px;
+}
+
+/* Make each chapter feel like a small book */
+.book-chapter {
+  overflow: hidden;
+  padding-left: 30px;
+  background:
+    linear-gradient(90deg, rgba(181,138,58,.18) 0 9px, transparent 9px),
+    linear-gradient(145deg, rgba(255,255,255,.72), rgba(237,228,207,.58));
+  box-shadow:
+    inset 1px 0 rgba(255,255,255,.8),
+    inset -1px 0 rgba(94,73,44,.08),
+    0 7px 15px rgba(85,67,43,.08);
+}
+
+.book-chapter::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 9px;
+  width: 2px;
+  background: rgba(181,138,58,.34);
+}
+
+.book-chapter::after {
+  content: "";
+  position: absolute;
+  right: 17px;
+  top: -2px;
+  width: 18px;
+  height: 44px;
+  background: #8c4d45;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%);
+  opacity: .82;
+}
+
+/* Slight variation between chapter ribbons */
+.book-chapter:nth-child(3n + 2)::after {
+  background: #3f6b72;
+}
+
+.book-chapter:nth-child(3n + 3)::after {
+  background: #7a6942;
+}
+
+.chapter-name {
+  padding-right: 26px;
+}
+
+/* A more tactile hover/tap response */
+.book-chapter:active {
+  transform: translateY(1px) scale(.995);
+  box-shadow:
+    inset 1px 0 rgba(255,255,255,.8),
+    0 3px 8px rgba(85,67,43,.08);
+}
+
+/* Improve the two-page composition on wider screens */
+@media (min-width: 861px) {
+  .book-screen {
+    grid-template-columns: minmax(350px, 40%) minmax(0, 60%);
+  }
+
+  .book-cover {
+    min-width: 0;
+  }
+
+  .contents-card {
+    min-width: 0;
+  }
+}
+
+/* iPad landscape: keep the title elegant and contained */
+@media (min-width: 861px) and (max-width: 1180px) {
+  .book-cover h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+
+  .book-cover {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* Phones and narrow tablets */
+@media (max-width: 560px) {
+  .book-cover h1 {
+    font-size: clamp(2.2rem, 12vw, 3.35rem);
+    letter-spacing: -0.045em;
+  }
+
+  .book-chapter {
+    min-height: 138px;
+  }
+}
+Stats();
   renderBook();
 })();
