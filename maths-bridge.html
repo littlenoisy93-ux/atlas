@@ -1,1 +1,1052 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#24394a">
+<title>Maths Bridge · Atlas</title>
 
+<style>
+:root {
+  --ink: #26323a;
+  --paper: #fffdf5;
+  --blue: #315d76;
+  --green: #3f6b50;
+  --line: #b9d5e8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--ink);
+  background: #e9e0c9;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding:
+    max(10px, env(safe-area-inset-top))
+    14px
+    10px;
+  color: white;
+  background: #24394a;
+  box-shadow: 0 3px 12px #0004;
+}
+
+.home {
+  padding: 8px 12px;
+  color: white;
+  text-decoration: none;
+  border: 1px solid #ffffff55;
+  border-radius: 10px;
+}
+
+.title {
+  flex: 1;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.15rem;
+}
+
+.stats {
+  white-space: nowrap;
+  font-size: 0.92rem;
+}
+
+.app {
+  width: min(1200px, 100%);
+  margin: auto;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.85fr) minmax(360px, 1.15fr);
+  gap: 16px;
+}
+
+.card {
+  overflow: hidden;
+  background: var(--paper);
+  border: 2px solid #c9b78e;
+  border-radius: 18px;
+  box-shadow: 0 8px 22px #4e3e2830;
+}
+
+.question {
+  padding: 22px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6a7180;
+  font-size: 0.78rem;
+}
+
+.question h1 {
+  margin: 14px 0;
+  font-size: clamp(1.45rem, 3vw, 2.25rem);
+  line-height: 1.25;
+}
+
+.answer-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.answer-row input {
+  flex: 1;
+  min-width: 150px;
+  padding: 13px;
+  background: white;
+  border: 2px solid #aeb9c0;
+  border-radius: 12px;
+  font-size: 1.1rem;
+}
+
+.primary,
+.tool,
+.next {
+  padding: 12px 16px;
+  color: white;
+  background: var(--blue);
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 0 #203d4e;
+}
+
+.tool {
+  background: #70557b;
+  box-shadow: 0 4px 0 #493851;
+}
+
+.next {
+  background: var(--green);
+  box-shadow: 0 4px 0 #294735;
+}
+
+.primary:active,
+.tool:active,
+.next:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
+.feedback {
+  display: none;
+  margin-top: 18px;
+  padding: 15px;
+  border-radius: 12px;
+  line-height: 1.45;
+}
+
+.feedback.show {
+  display: block;
+}
+
+.feedback.good {
+  background: #e5f2e8;
+  border: 2px solid #8eb69a;
+}
+
+.feedback.bad {
+  background: #f8e7e4;
+  border: 2px solid #c8938b;
+}
+
+.explanation {
+  margin-top: 8px;
+}
+
+.tools {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.reminder {
+  display: none;
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: #fff5cf;
+  border: 1px solid #d6b95f;
+  border-radius: 11px;
+}
+
+.reminder.show {
+  display: block;
+}
+
+.workspace {
+  display: flex;
+  flex-direction: column;
+  min-height: 650px;
+}
+
+.workspace-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 14px;
+  background: #f2ead7;
+  border-bottom: 1px solid #cfbf9d;
+}
+
+.workspace-head strong {
+  flex: 1;
+}
+
+.smallbtn {
+  padding: 7px 10px;
+  background: #fffaf0;
+  border: 1px solid #9a8b70;
+  border-radius: 9px;
+}
+
+.pad-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 440px;
+  overflow: hidden;
+  touch-action: none;
+  background-color: #fbfdff;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px),
+    linear-gradient(#83afd0 1px, transparent 1px),
+    linear-gradient(90deg, #83afd0 1px, transparent 1px);
+  background-size:
+    20px 20px,
+    20px 20px,
+    100px 100px,
+    100px 100px;
+}
+
+.pad-wrap canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.hint {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  pointer-events: none;
+  color: #5d7486aa;
+  font-size: 0.85rem;
+}
+
+.calculator {
+  display: none;
+  padding: 14px;
+  background: #ded6c5;
+  border-top: 1px solid #bbae91;
+}
+
+.calculator.open {
+  display: block;
+}
+
+.calc-display {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 12px;
+  text-align: right;
+  background: white;
+  border: 2px solid #a59c89;
+  border-radius: 10px;
+  font: 1.25rem ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.key {
+  padding: 12px;
+  background: white;
+  border: 0;
+  border-radius: 9px;
+  box-shadow: 0 3px 0 #aaa08e;
+}
+
+.key.op {
+  background: #f1d59b;
+}
+
+.key.equal {
+  color: white;
+  background: #567965;
+}
+
+.key.clear {
+  color: white;
+  background: #b75a55;
+}
+
+.chapter-row {
+  display: flex;
+  gap: 7px;
+  overflow: auto;
+  padding: 10px 14px;
+  background: #eee5d2;
+  border-top: 1px solid #d3c3a1;
+}
+
+.chapter {
+  white-space: nowrap;
+  padding: 7px 11px;
+  background: #fffaf0;
+  border: 1px solid #a99167;
+  border-radius: 999px;
+}
+
+.chapter.active {
+  color: white;
+  background: #315d76;
+}
+
+.footer-note {
+  padding: 10px;
+  text-align: center;
+  color: #746a58;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 780px) {
+  .app {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+
+  .workspace {
+    min-height: 570px;
+  }
+
+  .pad-wrap {
+    min-height: 390px;
+  }
+
+  .title {
+    text-align: left;
+  }
+
+  .stats {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 430px) {
+  .topbar {
+    gap: 7px;
+  }
+
+  .home {
+    padding: 7px 9px;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  .app {
+    padding: 7px;
+    gap: 9px;
+  }
+
+  .question {
+    padding: 16px;
+  }
+
+  .answer-row > * {
+    width: 100%;
+  }
+
+  .workspace {
+    min-height: 520px;
+  }
+
+  .pad-wrap {
+    min-height: 340px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <a class="home" href="index.html">← Atlas</a>
+  <div class="title">🌉 Maths Bridge</div>
+  <div class="stats">
+    🔥 <span id="streak">0</span>
+    · 🪙 <span id="coins">0</span>
+  </div>
+</header>
+
+<main class="app">
+
+  <section class="card question">
+    <div class="eyebrow" id="topic">Nombres</div>
+
+    <h1 id="prompt">Chargement…</h1>
+
+    <div class="answer-row">
+      <input
+        id="answer"
+        autocomplete="off"
+        inputmode="decimal"
+        placeholder="Ta réponse"
+      >
+
+      <button class="primary" id="check">
+        Vérifier
+      </button>
+    </div>
+
+    <div class="tools">
+      <button class="tool" id="reminderBtn">
+        💡 Rappel
+      </button>
+
+      <button class="tool" id="calculatorBtn">
+        🧮 Calculatrice
+      </button>
+    </div>
+
+    <div class="reminder" id="reminder"></div>
+
+    <div class="feedback" id="feedback">
+      <strong id="feedbackTitle"></strong>
+
+      <div class="explanation" id="explanation"></div>
+
+      <button class="next" id="next" style="margin-top:12px">
+        Question suivante
+      </button>
+    </div>
+  </section>
+
+  <section class="card workspace">
+
+    <div class="workspace-head">
+      <strong>Feuille de brouillon</strong>
+
+      <button class="smallbtn" id="undo">
+        ↶ Annuler
+      </button>
+
+      <button class="smallbtn" id="clear">
+        Effacer
+      </button>
+    </div>
+
+    <div class="pad-wrap" id="padWrap">
+      <canvas id="pad"></canvas>
+
+      <div class="hint">
+        Écris avec ton doigt, l’Apple Pencil ou la souris.
+      </div>
+    </div>
+
+    <div class="calculator" id="calculator">
+      <input
+        class="calc-display"
+        id="calcDisplay"
+        readonly
+        value="0"
+      >
+
+      <div class="keys" id="keys"></div>
+    </div>
+
+    <div class="chapter-row" id="chapters"></div>
+
+  </section>
+
+</main>
+
+<div class="footer-note">
+  Ton brouillon reste visible après la correction pour comparer ton raisonnement.
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    t: "Nombres",
+    q: "Calcule : 48 + 27",
+    a: ["75"],
+    r: "Additionne les unités, puis les dizaines.",
+    h: "Pose l’addition en alignant unités et dizaines."
+  },
+  {
+    t: "Nombres",
+    q: "Calcule : 125 − 68",
+    a: ["57"],
+    r: "125 − 68 = 57.",
+    h: "Tu peux faire 125 − 60, puis − 8."
+  },
+  {
+    t: "Nombres",
+    q: "Calcule : 7 × 8",
+    a: ["56"],
+    r: "7 × 8 = 56.",
+    h: "C’est un produit : 7 groupes de 8."
+  },
+  {
+    t: "Nombres",
+    q: "Calcule : 144 ÷ 12",
+    a: ["12"],
+    r: "144 ÷ 12 = 12.",
+    h: "Cherche le nombre qui, multiplié par 12, donne 144."
+  },
+  {
+    t: "Priorités",
+    q: "Calcule : 4 + 3 × 5",
+    a: ["19"],
+    r: "On effectue d’abord 3 × 5 = 15, puis 4 + 15 = 19.",
+    h: "Les multiplications et divisions passent avant les additions et soustractions."
+  },
+  {
+    t: "Priorités",
+    q: "Calcule : (9 − 3) × 4",
+    a: ["24"],
+    r: "Les parenthèses d’abord : 9 − 3 = 6, puis 6 × 4 = 24.",
+    h: "Commence toujours par ce qui est entre parenthèses."
+  },
+  {
+    t: "Fractions",
+    q: "Simplifie la fraction 12/18",
+    a: ["2/3", "2 ÷ 3"],
+    r: "12 et 18 sont divisibles par 6 : 12/18 = 2/3.",
+    h: "Divise le numérateur et le dénominateur par le même nombre."
+  },
+  {
+    t: "Fractions",
+    q: "Calcule : 1/4 + 2/4",
+    a: ["3/4"],
+    r: "Les dénominateurs sont identiques : on additionne les numérateurs.",
+    h: "Quand les dénominateurs sont identiques, garde le dénominateur."
+  },
+  {
+    t: "Fractions",
+    q: "Quelle fraction de 20 représente 5 ?",
+    a: ["1/4", "5/20"],
+    r: "5/20 se simplifie en 1/4.",
+    h: "Écris partie/total, puis simplifie."
+  },
+  {
+    t: "Décimaux",
+    q: "Calcule : 3,7 + 2,45",
+    a: ["6,15", "6.15"],
+    r: "En alignant les virgules : 3,70 + 2,45 = 6,15.",
+    h: "Aligne les virgules et complète avec un zéro si nécessaire."
+  },
+  {
+    t: "Décimaux",
+    q: "Écris 0,75 sous forme de fraction simplifiée.",
+    a: ["3/4"],
+    r: "0,75 = 75/100 = 3/4.",
+    h: "0,75 signifie 75 centièmes."
+  },
+  {
+    t: "Proportionnalité",
+    q: "3 cahiers coûtent 6 €. Combien coûtent 5 cahiers ?",
+    a: ["10", "10€", "10 €"],
+    r: "Un cahier coûte 2 €, donc 5 coûtent 10 €.",
+    h: "Commence par trouver le prix d’un seul cahier."
+  },
+  {
+    t: "Proportionnalité",
+    q: "Une recette pour 4 personnes utilise 300 g de farine. Combien pour 8 personnes ?",
+    a: ["600", "600g", "600 g"],
+    r: "On double le nombre de personnes, donc on double 300 g : 600 g.",
+    h: "Compare 8 à 4 : quel est le coefficient ?"
+  },
+  {
+    t: "Pourcentages",
+    q: "Calcule 25 % de 80.",
+    a: ["20"],
+    r: "25 % correspond à un quart ; un quart de 80 vaut 20.",
+    h: "25 % = 25/100 = 1/4."
+  },
+  {
+    t: "Pourcentages",
+    q: "Un article à 50 € baisse de 10 %. Quel est son nouveau prix ?",
+    a: ["45", "45€", "45 €"],
+    r: "10 % de 50 € vaut 5 €. Le nouveau prix est 50 − 5 = 45 €.",
+    h: "Calcule d’abord le montant de la réduction."
+  },
+  {
+    t: "Moyenne",
+    q: "Calcule la moyenne de 12, 15 et 18.",
+    a: ["15"],
+    r: "(12 + 15 + 18) ÷ 3 = 45 ÷ 3 = 15.",
+    h: "Additionne toutes les valeurs puis divise par leur nombre."
+  },
+  {
+    t: "Géométrie",
+    q: "Un rectangle mesure 8 cm sur 5 cm. Quel est son périmètre ?",
+    a: ["26", "26cm", "26 cm"],
+    r: "P = 2 × (8 + 5) = 26 cm.",
+    h: "Le périmètre est la longueur du contour."
+  },
+  {
+    t: "Géométrie",
+    q: "Un rectangle mesure 7 cm sur 4 cm. Quelle est son aire ?",
+    a: ["28", "28cm²", "28 cm²", "28cm2", "28 cm2"],
+    r: "Aire = longueur × largeur = 7 × 4 = 28 cm².",
+    h: "L’aire mesure la surface intérieure."
+  },
+  {
+    t: "Géométrie",
+    q: "Un triangle a deux angles de 45°. Combien mesure le troisième angle ?",
+    a: ["90", "90°"],
+    r: "La somme des angles d’un triangle est 180° : 180 − 45 − 45 = 90°.",
+    h: "Les trois angles d’un triangle totalisent 180°."
+  },
+  {
+    t: "Calcul littéral",
+    q: "Réduis : 3x + 5x",
+    a: ["8x", "8 x"],
+    r: "3x + 5x = 8x.",
+    h: "Additionne les coefficients des termes semblables."
+  },
+  {
+    t: "Calcul littéral",
+    q: "Calcule 2x + 3 pour x = 4.",
+    a: ["11"],
+    r: "2 × 4 + 3 = 8 + 3 = 11.",
+    h: "Remplace x par 4, puis respecte les priorités."
+  },
+  {
+    t: "Équations",
+    q: "Résous : x + 7 = 19",
+    a: ["12", "x=12", "x = 12"],
+    r: "On soustrait 7 des deux côtés : x = 12.",
+    h: "Fais la même opération des deux côtés de l’égalité."
+  },
+  {
+    t: "Équations",
+    q: "Résous : 3x = 21",
+    a: ["7", "x=7", "x = 7"],
+    r: "On divise les deux côtés par 3 : x = 7.",
+    h: "Pour isoler x, divise par son coefficient."
+  },
+  {
+    t: "Logique",
+    q: "Je pense à un nombre. Je le double puis j’ajoute 3 et j’obtiens 17. Quel est ce nombre ?",
+    a: ["7"],
+    r: "On remonte les opérations : 17 − 3 = 14, puis 14 ÷ 2 = 7.",
+    h: "Effectue les opérations inverses dans l’ordre inverse."
+  }
+];
+
+let selected = "Tous";
+let current = null;
+let lastIndex = -1;
+
+let streak = Number(
+  localStorage.getItem("atlasMathStreak") || 0
+);
+
+let coins = Number(
+  localStorage.getItem("atlasMathCoins") || 0
+);
+
+const $ = id => document.getElementById(id);
+
+const topic = $("topic");
+const prompt = $("prompt");
+const answer = $("answer");
+const feedback = $("feedback");
+const feedbackTitle = $("feedbackTitle");
+const explanation = $("explanation");
+const reminder = $("reminder");
+
+function normalise(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, " ")
+    .replace(/,/g, ".")
+    .replace(/€|cm²|cm2|cm|°/g, "")
+    .replace(/\s/g, "");
+}
+
+function questionPool() {
+  if (selected === "Tous") {
+    return QUESTIONS;
+  }
+
+  return QUESTIONS.filter(question => question.t === selected);
+}
+
+function newQuestion() {
+  const pool = questionPool();
+
+  let index = Math.floor(Math.random() * pool.length);
+
+  if (pool.length > 1 && index === lastIndex) {
+    index = (index + 1) % pool.length;
+  }
+
+  lastIndex = index;
+  current = pool[index];
+
+  topic.textContent = current.t;
+  prompt.textContent = current.q;
+  answer.value = "";
+
+  feedback.className = "feedback";
+  reminder.className = "reminder";
+
+  answer.focus();
+}
+
+function updateStats() {
+  $("streak").textContent = streak;
+  $("coins").textContent = coins;
+
+  localStorage.setItem("atlasMathStreak", streak);
+  localStorage.setItem("atlasMathCoins", coins);
+}
+
+function checkAnswer() {
+  if (!answer.value.trim()) {
+    return;
+  }
+
+  const correct = current.a.some(
+    accepted => normalise(accepted) === normalise(answer.value)
+  );
+
+  feedback.className =
+    "feedback show " + (correct ? "good" : "bad");
+
+  feedbackTitle.textContent =
+    correct ? "✓ Bravo !" : "Pas encore.";
+
+  explanation.textContent = current.r;
+
+  if (correct) {
+    streak += 1;
+    coins += 10;
+  } else {
+    streak = 0;
+  }
+
+  updateStats();
+}
+
+$("check").onclick = checkAnswer;
+
+answer.addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    checkAnswer();
+  }
+});
+
+$("next").onclick = newQuestion;
+
+$("reminderBtn").onclick = () => {
+  reminder.textContent = current.h;
+  reminder.classList.toggle("show");
+};
+
+/* Chapters */
+
+const topicNames = [
+  "Tous",
+  ...new Set(QUESTIONS.map(question => question.t))
+];
+
+topicNames.forEach(name => {
+  const button = document.createElement("button");
+
+  button.className =
+    "chapter" + (name === "Tous" ? " active" : "");
+
+  button.textContent = name;
+
+  button.onclick = () => {
+    selected = name;
+
+    document
+      .querySelectorAll(".chapter")
+      .forEach(item => item.classList.remove("active"));
+
+    button.classList.add("active");
+
+    lastIndex = -1;
+    newQuestion();
+  };
+
+  $("chapters").appendChild(button);
+});
+
+/* Calculator */
+
+const calculator = $("calculator");
+const calcDisplay = $("calcDisplay");
+
+$("calculatorBtn").onclick = () => {
+  calculator.classList.toggle("open");
+};
+
+const calculatorKeys = [
+  "C", "(", ")", "÷",
+  "7", "8", "9", "×",
+  "4", "5", "6", "−",
+  "1", "2", "3", "+",
+  "0", ",", "⌫", "="
+];
+
+let expression = "";
+
+function renderCalculator() {
+  calcDisplay.value = expression || "0";
+}
+
+function calculate() {
+  try {
+    const safeExpression = expression
+      .replace(/,/g, ".")
+      .replace(/×/g, "*")
+      .replace(/÷/g, "/")
+      .replace(/−/g, "-");
+
+    if (!/^[0-9+\-*/().\s]+$/.test(safeExpression)) {
+      throw new Error("Invalid expression");
+    }
+
+    const result = Function(
+      '"use strict"; return (' + safeExpression + ")"
+    )();
+
+    if (!Number.isFinite(result)) {
+      throw new Error("Invalid result");
+    }
+
+    expression = String(
+      Math.round((result + Number.EPSILON) * 1e10) / 1e10
+    ).replace(".", ",");
+
+    renderCalculator();
+  } catch {
+    calcDisplay.value = "Erreur";
+    expression = "";
+  }
+}
+
+calculatorKeys.forEach(key => {
+  const button = document.createElement("button");
+
+  button.className =
+    "key " +
+    (
+      key === "="
+        ? "equal"
+        : key === "C"
+          ? "clear"
+          : ["÷", "×", "−", "+"].includes(key)
+            ? "op"
+            : ""
+    );
+
+  button.textContent = key;
+
+  button.onclick = () => {
+    if (key === "C") {
+      expression = "";
+    } else if (key === "⌫") {
+      expression = expression.slice(0, -1);
+    } else if (key === "=") {
+      calculate();
+      return;
+    } else {
+      expression += key;
+    }
+
+    renderCalculator();
+  };
+
+  $("keys").appendChild(button);
+});
+
+/* Scratchpad */
+
+const canvas = $("pad");
+const padWrap = $("padWrap");
+const context = canvas.getContext("2d");
+
+let drawing = false;
+let paths = [];
+let currentPath = [];
+
+function resizeCanvas() {
+  const rectangle = padWrap.getBoundingClientRect();
+  const pixelRatio = Math.min(
+    window.devicePixelRatio || 1,
+    2
+  );
+
+  canvas.width = Math.max(
+    1,
+    Math.round(rectangle.width * pixelRatio)
+  );
+
+  canvas.height = Math.max(
+    1,
+    Math.round(rectangle.height * pixelRatio)
+  );
+
+  canvas.style.width = rectangle.width + "px";
+  canvas.style.height = rectangle.height + "px";
+
+  context.setTransform(
+    pixelRatio,
+    0,
+    0,
+    pixelRatio,
+    0,
+    0
+  );
+
+  context.lineCap = "round";
+  context.lineJoin = "round";
+  context.strokeStyle = "#24394a";
+  context.lineWidth = 2.2;
+
+  redraw();
+}
+
+function pointerPosition(event) {
+  const rectangle = canvas.getBoundingClientRect();
+
+  return {
+    x: event.clientX - rectangle.left,
+    y: event.clientY - rectangle.top
+  };
+}
+
+function redraw() {
+  context.clearRect(
+    0,
+    0,
+    canvas.clientWidth,
+    canvas.clientHeight
+  );
+
+  for (const path of paths) {
+    if (path.length < 2) {
+      continue;
+    }
+
+    context.beginPath();
+    context.moveTo(path[0].x, path[0].y);
+
+    for (let index = 1; index < path.length; index += 1) {
+      context.lineTo(
+        path[index].x,
+        path[index].y
+      );
+    }
+
+    context.stroke();
+  }
+}
+
+canvas.addEventListener("pointerdown", event => {
+  drawing = true;
+  currentPath = [pointerPosition(event)];
+
+  canvas.setPointerCapture(event.pointerId);
+  event.preventDefault();
+});
+
+canvas.addEventListener("pointermove", event => {
+  if (!drawing) {
+    return;
+  }
+
+  const point = pointerPosition(event);
+  const previous = currentPath[currentPath.length - 1];
+
+  currentPath.push(point);
+
+  context.beginPath();
+  context.moveTo(previous.x, previous.y);
+  context.lineTo(point.x, point.y);
+  context.stroke();
+
+  event.preventDefault();
+});
+
+function finishDrawing(event) {
+  if (!drawing) {
+    return;
+  }
+
+  drawing = false;
+
+  if (currentPath.length) {
+    paths.push(currentPath);
+  }
+
+  currentPath = [];
+  event.preventDefault();
+}
+
+canvas.addEventListener("pointerup", finishDrawing);
+canvas.addEventListener("pointercancel", finishDrawing);
+
+$("clear").onclick = () => {
+  paths = [];
+  redraw();
+};
+
+$("undo").onclick = () => {
+  paths.pop();
+  redraw();
+};
+
+new ResizeObserver(resizeCanvas).observe(padWrap);
+
+window.addEventListener("orientationchange", () => {
+  setTimeout(resizeCanvas, 250);
+});
+
+updateStats();
+newQuestion();
+</script>
+
+</body>
+</html>
