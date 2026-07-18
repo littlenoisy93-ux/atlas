@@ -2,36 +2,443 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#241a2d">
   <title>Atlas: The Scriptorium</title>
+
   <style>
+    :root {
+      --ink: #34251c;
+      --cream: #f6edda;
+      --paper: #fffaf0;
+      --gold: #d9a441;
+      --purple: #4b355b;
+      --deep-purple: #241a2d;
+      --green: #355a48;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
     body {
-      font-family: Georgia, serif;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--cream);
+      background:
+        radial-gradient(circle at 50% 5%, rgba(255,255,255,.12), transparent 25%),
+        linear-gradient(180deg, #392943 0%, var(--deep-purple) 55%, #17111d 100%);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding:
+        max(24px, env(safe-area-inset-top))
+        20px
+        max(35px, env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: center;
+    }
+
+    .library {
+      width: min(1050px, 100%);
+    }
+
+    header {
       text-align: center;
-      padding: 60px 20px;
-      background: #f4ecd8;
-      color: #3d2b1f;
+      padding: 25px 10px 20px;
+    }
+
+    .owl {
+      font-size: 58px;
+      filter: drop-shadow(0 8px 8px rgba(0,0,0,.35));
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      50% {
+        transform: translateY(-7px);
+      }
     }
 
     h1 {
-      font-size: 2.5rem;
+      margin: 8px 0 2px;
+      font-size: clamp(2.3rem, 7vw, 4.7rem);
+      letter-spacing: .03em;
+      text-shadow: 0 5px 15px rgba(0,0,0,.45);
     }
 
-    .card {
-      max-width: 600px;
+    .subtitle {
+      margin: 0;
+      color: #e5c989;
+      font-size: clamp(1rem, 3vw, 1.35rem);
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .welcome {
+      max-width: 650px;
+      margin: 22px auto 30px;
+      padding: 18px 22px;
+      color: var(--ink);
+      background: rgba(255,250,240,.96);
+      border: 3px double #a4783c;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.28);
+      text-align: center;
+    }
+
+    .welcome strong {
+      color: var(--purple);
+    }
+
+    .profiles {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .profile {
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 999px;
+      padding: 10px 17px;
+      color: white;
+      background: rgba(255,255,255,.09);
+      cursor: pointer;
+    }
+
+    .profile.active {
+      color: #261a17;
+      background: #efd48c;
+      border-color: #fff0be;
+      box-shadow: 0 0 18px rgba(239,212,140,.45);
+    }
+
+    .shelf {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(125px, 1fr));
+      align-items: end;
+      gap: 18px;
+      padding: 30px 25px 42px;
+      border-radius: 20px 20px 4px 4px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.06), transparent 20%, rgba(0,0,0,.18)),
+        #694126;
+      box-shadow:
+        inset 0 10px 18px rgba(255,255,255,.09),
+        inset 0 -12px 20px rgba(0,0,0,.35),
+        0 18px 35px rgba(0,0,0,.4);
+    }
+
+    .shelf::after {
+      content: "";
+      position: absolute;
+      left: -10px;
+      right: -10px;
+      bottom: -14px;
+      height: 25px;
+      border-radius: 5px;
+      background: linear-gradient(#8d5c32, #4b2c18);
+      box-shadow: 0 10px 12px rgba(0,0,0,.4);
+    }
+
+    .book {
+      min-height: 270px;
+      padding: 18px 13px;
+      border: 0;
+      border-radius: 8px 14px 14px 8px;
+      color: #fff7df;
+      cursor: pointer;
+      box-shadow:
+        inset 7px 0 0 rgba(255,255,255,.12),
+        inset -6px 0 0 rgba(0,0,0,.16),
+        8px 12px 14px rgba(0,0,0,.35);
+      transform-origin: bottom;
+      transition: transform .2s ease, filter .2s ease;
+    }
+
+    .book:hover,
+    .book:focus-visible {
+      transform: translateY(-12px) rotate(-1deg);
+      filter: brightness(1.08);
+    }
+
+    .book-icon {
+      display: block;
+      margin-bottom: 18px;
+      font-size: 42px;
+    }
+
+    .book-title {
+      display: block;
+      font-size: 1.35rem;
+      font-weight: bold;
+      writing-mode: vertical-rl;
       margin: auto;
-      padding: 30px;
-      background: white;
+      letter-spacing: .08em;
+    }
+
+    .book small {
+      display: block;
+      margin-top: 15px;
+      opacity: .75;
+    }
+
+    .maths {
+      background: linear-gradient(135deg, #315d76, #19394f);
+    }
+
+    .french {
+      background: linear-gradient(135deg, #874755, #522634);
+    }
+
+    .spanish {
+      background: linear-gradient(135deg, #aa6b27, #714114);
+    }
+
+    .science {
+      background: linear-gradient(135deg, #497054, #274333);
+    }
+
+    .history {
+      background: linear-gradient(135deg, #76528a, #49305a);
+    }
+
+    .locked {
+      opacity: .64;
+      filter: grayscale(.3);
+    }
+
+    .panel {
+      display: none;
+      max-width: 760px;
+      margin: 35px auto 0;
+      padding: 28px;
+      color: var(--ink);
+      background: var(--paper);
+      border: 4px double #a4783c;
       border-radius: 18px;
-      box-shadow: 0 8px 25px rgba(0,0,0,.15);
+      box-shadow: 0 16px 35px rgba(0,0,0,.35);
+    }
+
+    .panel.open {
+      display: block;
+      animation: openBook .35s ease-out;
+    }
+
+    @keyframes openBook {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(.97);
+      }
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      color: #244f68;
+      font-size: 2rem;
+    }
+
+    .lesson-card {
+      padding: 18px;
+      margin: 16px 0;
+      border: 2px solid #d9c298;
+      border-radius: 14px;
+      background: white;
+    }
+
+    .start {
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 20px;
+      color: white;
+      background: var(--green);
+      cursor: pointer;
+      box-shadow: 0 5px 0 #20372c;
+    }
+
+    .message {
+      margin-top: 15px;
+      min-height: 24px;
+      font-weight: bold;
+      color: var(--purple);
+    }
+
+    footer {
+      padding-top: 36px;
+      text-align: center;
+      color: rgba(255,255,255,.65);
+      font-size: .9rem;
+    }
+
+    @media (max-width: 760px) {
+      .shelf {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+
+      .book {
+        min-height: 205px;
+      }
+
+      .book-title {
+        writing-mode: horizontal-tb;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .shelf {
+        padding-left: 14px;
+        padding-right: 14px;
+        gap: 12px;
+      }
+
+      .book {
+        min-height: 180px;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div class="card">
-    <h1>Atlas: The Scriptorium</h1>
-    <p>The library doors are open.</p>
-    <p>Maths Bridge is coming next.</p>
-  </div>
+  <main class="page">
+    <div class="library">
+      <header>
+        <div class="owl" aria-hidden="true">🦉</div>
+        <h1>Atlas</h1>
+        <p class="subtitle">The Scriptorium</p>
+      </header>
+
+      <section class="welcome">
+        Welcome, <strong id="studentName">Scholar</strong>.
+        Choose a book from the shelf. Mathematics is open;
+        the other wings of the library are still being prepared.
+      </section>
+
+      <div class="profiles" aria-label="Choose a student">
+        <button class="profile active" data-name="Scholar">Guest</button>
+        <button class="profile" data-name="Gudrun">G</button>
+        <button class="profile" data-name="Christobal">C</button>
+        <button class="profile" data-name="Nevan">N</button>
+      </div>
+
+      <section class="shelf" aria-label="Subject library">
+        <button class="book maths" id="mathsBook">
+          <span class="book-icon">📐</span>
+          <span class="book-title">Mathematics</span>
+          <small>Open</small>
+        </button>
+
+        <button class="book french locked" data-locked="true">
+          <span class="book-icon">✒️</span>
+          <span class="book-title">French</span>
+          <small>Locked</small>
+        </button>
+
+        <button class="book spanish locked" data-locked="true">
+          <span class="book-icon">🗺️</span>
+          <span class="book-title">Spanish</span>
+          <small>Locked</small>
+        </button>
+
+        <button class="book science locked" data-locked="true">
+          <span class="book-icon">🔬</span>
+          <span class="book-title">Science</span>
+          <small>Locked</small>
+        </button>
+
+        <button class="book history locked" data-locked="true">
+          <span class="book-icon">🏛️</span>
+          <span class="book-title">History</span>
+          <small>Locked</small>
+        </button>
+      </section>
+
+      <section class="panel" id="mathsPanel">
+        <h2>Mathematics</h2>
+        <p>
+          The first pages of the mathematics book have been restored.
+        </p>
+
+        <div class="lesson-card">
+          <h3>🌉 Maths Bridge</h3>
+          <p>
+            Practise essential skills using a question, scratch pad,
+            rule reminders and calculator.
+          </p>
+          <button class="start" id="startMaths">Enter Maths Bridge</button>
+          <div class="message" id="message"></div>
+        </div>
+      </section>
+
+      <footer>
+        Atlas: The Scriptorium · First Library Build
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    const profiles = document.querySelectorAll(".profile");
+    const studentName = document.getElementById("studentName");
+    const mathsBook = document.getElementById("mathsBook");
+    const mathsPanel = document.getElementById("mathsPanel");
+    const message = document.getElementById("message");
+
+    const savedStudent = localStorage.getItem("atlasStudent");
+
+    if (savedStudent) {
+      studentName.textContent = savedStudent;
+
+      profiles.forEach(profile => {
+        profile.classList.toggle(
+          "active",
+          profile.dataset.name === savedStudent
+        );
+      });
+    }
+
+    profiles.forEach(profile => {
+      profile.addEventListener("click", () => {
+        profiles.forEach(item => item.classList.remove("active"));
+        profile.classList.add("active");
+
+        const name = profile.dataset.name;
+        studentName.textContent = name;
+        localStorage.setItem("atlasStudent", name);
+      });
+    });
+
+    mathsBook.addEventListener("click", () => {
+      mathsPanel.classList.toggle("open");
+
+      if (mathsPanel.classList.contains("open")) {
+        mathsPanel.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    });
+
+    document.querySelectorAll("[data-locked='true']").forEach(book => {
+      book.addEventListener("click", () => {
+        alert("This section of the library is still locked.");
+      });
+    });
+
+    document.getElementById("startMaths").addEventListener("click", () => {
+      message.textContent =
+        "Maths Bridge will be installed here in the next update.";
+    });
+  </script>
 </body>
 </html>
