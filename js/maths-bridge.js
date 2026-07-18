@@ -14,6 +14,10 @@
     topics: {}
   };
 
+  const chapterNames = [
+    ...new Set(QUESTIONS.map(question => question.t))
+  ];
+
   $("studentLabel").textContent = "· " + Progress.student;
 
   function normalise(text) {
@@ -24,6 +28,85 @@
       .replace(/,/g, ".")
       .replace(/€|cm²|cm2|cm|°/g, "")
       .replace(/\s/g, "");
+  }
+
+  function ensureTopicStats(name) {
+    return Progress.ensureStats(Progress.progress.topics, name);
+  }
+
+  function topicAccuracy(name) {
+    const stats = ensureTopicStats(name);
+
+    return stats.seen
+      ? stats.correct / stats.seen
+      : 0;
+  }
+
+  function topicStars(name) {
+    const stats = ensureTopicStats(name);
+
+    if (!stats.seen) return 0;
+
+    const accuracy = stats.correct / stats.seen;
+
+    if (stats.seen >= 12 && accuracy >= 0.9) return 5;
+    if (stats.seen >= 9 && accuracy >= 0.8) return 4;
+    if (stats.seen >= 6 && accuracy >= 0.7) return 3;
+    if (stats.seen >= 3 && accuracy >= 0.55) return 2;
+
+    return 1;
+  }
+
+  function starsText(count) {
+    return "★".repeat(count) + "☆".repeat(5 - count);
+  }
+
+  function overallProgress() {
+    if (!chapterNames.length) return 0;
+
+    const totalStars = chapterNames.reduce(
+      (sum, name) => sum + topicStars(name),
+      0
+    );
+
+    return Math.round(
+      (totalStars / (chapterNames.length * 5)) * 100
+    );
+  }
+
+  function renderBook() {
+    const grid = $("bookChapters");
+    grid.innerHTML = "";
+
+    chapterNames.forEach((name, index) => {
+      const stats = ensureTopicStats(name);
+      const stars = topicStars(name);
+      const button = document.createElement("button");
+
+      button.className = "book-chapter";
+      button.innerHTML = `
+        <span class="chapter-number">Chapitre ${index + 1}</span>
+        <span class="chapter-name">${name}</span>
+        <span class="chapter-stars" aria-label="${stars} étoiles sur 5">
+          ${starsText(stars)}
+        </span>
+        <span class="chapter-score">
+          ${
+            stats.seen
+              ? `${stats.correct}/${stats.seen} réponses correctes`
+              : "Pas encore commencé"
+          }
+        </span>
+      `;
+
+      button.addEventListener("click", () => openLesson(name));
+      grid.appendChild(button);
+    });
+
+    const percent = overallProgress();
+
+    $("overallPercent").textContent = percent + " %";
+    $("overallBar").style.width = percent + "%";
   }
 
   function questionPool() {
@@ -57,13 +140,42 @@
     $("adaptiveNote").textContent =
       questionStats && questionStats.wrong > questionStats.correct
         ? "Cette notion revient parce qu’elle mérite encore un peu d’entraînement."
-        : "Atlas mélange les sujets et fera revenir plus souvent les notions qui ont besoin d’entraînement.";
+        : "Atlas fera revenir plus souvent les notions qui ont besoin d’entraînement.";
   }
 
   function updateStats() {
     $("streak").textContent = Progress.progress.streak;
     $("coins").textContent = Progress.progress.coins;
     Progress.save();
+    renderBook();
+  }
+
+  function openLesson(chapter = "Tous") {
+    selected = chapter;
+    lastId = "";
+
+    $("bookScreen").classList.add("hidden");
+    $("lessonScreen").classList.remove("hidden");
+
+    $("currentChapterLabel").textContent =
+      chapter === "Tous"
+        ? "Tous les chapitres"
+        : chapter;
+
+    newQuestion();
+
+    setTimeout(() => {
+      if (window.AtlasScratchpad) {
+        window.AtlasScratchpad.redraw();
+      }
+    }, 80);
+  }
+
+  function closeLesson() {
+    $("lessonScreen").classList.add("hidden");
+    $("bookScreen").classList.remove("hidden");
+    renderBook();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function checkAnswer() {
@@ -109,6 +221,20 @@
     updateStats();
   }
 
+  $("continueBook").addEventListener("click", () => {
+    const weakest = [...chapterNames].sort(
+      (first, second) =>
+        topicAccuracy(first) - topicAccuracy(second)
+    )[0];
+
+    const hasProgress = chapterNames.some(
+      name => ensureTopicStats(name).seen > 0
+    );
+
+    openLesson(hasProgress ? weakest : "Tous");
+  });
+
+  $("backToBook").addEventListener("click", closeLesson);
   $("check").addEventListener("click", checkAnswer);
 
   $("answer").addEventListener("keydown", event => {
@@ -124,34 +250,6 @@
   $("reminderBtn").addEventListener("click", () => {
     $("reminder").textContent = current.h;
     $("reminder").classList.toggle("show");
-  });
-
-  const topics = [
-    "Tous",
-    ...new Set(QUESTIONS.map(question => question.t))
-  ];
-
-  topics.forEach(name => {
-    const button = document.createElement("button");
-
-    button.className =
-      "chapter" + (name === "Tous" ? " active" : "");
-
-    button.textContent = name;
-
-    button.addEventListener("click", () => {
-      selected = name;
-
-      document
-        .querySelectorAll(".chapter")
-        .forEach(item => item.classList.remove("active"));
-
-      button.classList.add("active");
-      lastId = "";
-      newQuestion();
-    });
-
-    $("chapters").appendChild(button);
   });
 
   function percentage(correct, total) {
@@ -231,6 +329,10 @@
     showSummary(false);
   });
 
+  $("lessonSummaryBtn").addEventListener("click", () => {
+    showSummary(false);
+  });
+
   $("continueBtn").addEventListener("click", () => {
     $("summaryModal").classList.remove("open");
 
@@ -241,7 +343,7 @@
         topics: {}
       };
 
-      newQuestion();
+      closeLesson();
     }
   });
 
@@ -253,10 +355,9 @@
     };
 
     $("summaryModal").classList.remove("open");
-    newQuestion();
+    openLesson(selected);
   });
 
   updateStats();
-  newQuestion();
+  renderBook();
 })();
-
