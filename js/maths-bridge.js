@@ -122,6 +122,17 @@
     return filtered.length ? filtered : QUESTIONS;
   }
 
+  function resetSession() {
+    session = {
+      answered: 0,
+      correct: 0,
+      topics: {}
+    };
+    current = null;
+    answered = false;
+    lastId = "";
+  }
+
   function newQuestion() {
     if (session.answered >= 10) {
       showSummary(true);
@@ -134,6 +145,9 @@
 
     $("topic").textContent = current.t;
     $("prompt").textContent = current.q;
+    if ($("instruction")) {
+      $("instruction").textContent = current.i || "Réponds avec un nombre ou une expression courte.";
+    }
     $("answer").value = "";
     $("feedback").className = "feedback";
     $("reminder").className = "reminder";
@@ -166,6 +180,7 @@
   }
 
   function closeLesson() {
+    resetSession();
     $("lessonScreen").classList.add("hidden");
     $("bookScreen").classList.remove("hidden");
 
@@ -178,6 +193,7 @@
       .toLowerCase()
       .trim()
       .replace(/,/g, ".")
+      .replace(/euros?/g, "")
       .replace(/€|cm²|cm2|cm|°/g, "")
       .replace(/\s/g, "");
   }
@@ -355,11 +371,7 @@
   });
 
   $("newSessionBtn").addEventListener("click", () => {
-    session = {
-      answered: 0,
-      correct: 0,
-      topics: {}
-    };
+    resetSession();
 
     $("summaryModal").classList.remove("open");
     openLesson(selected);
