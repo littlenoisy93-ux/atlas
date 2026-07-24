@@ -747,3 +747,11 @@ button {
     font-size: .82rem;
   }
 }
+
+
+.answer-instruction {
+  margin: -6px 0 16px;
+  color: var(--muted);
+  font-size: 1rem;
+  font-style: italic;
+}
