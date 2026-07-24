@@ -101,7 +101,12 @@ window.AtlasScratchpad = (() => {
     redraw();
   });
 
-  new ResizeObserver(resizeCanvas).observe(padWrap);
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(resizeCanvas).observe(padWrap);
+  } else {
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+  }
 
   window.addEventListener("orientationchange", () => {
     setTimeout(resizeCanvas, 250);
