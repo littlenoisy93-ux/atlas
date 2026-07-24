@@ -321,7 +321,7 @@
 
       <section class="welcome">
         Welcome, <strong id="studentName">Scholar</strong>.
-        Choose a book from the shelf. Maths is open;
+        Choose a book from the shelf. Maths, French and Spanish are open;
         the other wings of the library are still being prepared.
       </section>
 
@@ -339,16 +339,16 @@
           <small>Open</small>
         </button>
 
-        <button class="book french locked" data-locked="true">
+        <button class="book french" id="frenchBook">
           <span class="book-icon">✒️</span>
           <span class="book-title">French</span>
-          <small>Locked</small>
+          <small>Open</small>
         </button>
 
-        <button class="book spanish locked" data-locked="true">
+        <button class="book spanish" id="spanishBook">
           <span class="book-icon">🗺️</span>
           <span class="book-title">Spanish</span>
-          <small>Locked</small>
+          <small>Open</small>
         </button>
 
         <button class="book science locked" data-locked="true">
@@ -365,18 +365,18 @@
       </section>
 
       <section class="panel" id="mathsPanel">
-        <h2>Math</h2>
+        <h2>Maths</h2>
         <p>
           The first pages of the mathematics book have been restored.
         </p>
 
         <div class="lesson-card">
-          <h3>🌉 Math Bridge</h3>
+          <h3>🌉 Maths Bridge</h3>
           <p>
             Practise essential skills using a question, scratch pad,
             rule reminders and calculator.
           </p>
-          <button class="start" id="startMaths">Enter Math Bridge</button>
+          <button class="start" id="startMaths">Enter Maths Bridge</button>
           <div class="message" id="message"></div>
         </div>
       </section>
@@ -391,6 +391,8 @@
     const profiles = document.querySelectorAll(".profile");
     const studentName = document.getElementById("studentName");
     const mathsBook = document.getElementById("mathsBook");
+    const frenchBook = document.getElementById("frenchBook");
+    const spanishBook = document.getElementById("spanishBook");
     const mathsPanel = document.getElementById("mathsPanel");
     const message = document.getElementById("message");
 
@@ -435,7 +437,15 @@
       });
     });
 document.getElementById("startMaths").addEventListener("click", () => {
-  window.location.href = "maths-bridge.html";
+      window.location.href = "maths-bridge.html?v=12";
+    });
+
+    frenchBook.addEventListener("click", () => {
+      window.location.href = "french-bridge.html?v=12";
+    });
+
+    spanishBook.addEventListener("click", () => {
+      window.location.href = "spanish-bridge.html?v=12";
     });
   </script>
 </body>
