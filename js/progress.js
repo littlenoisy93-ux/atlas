@@ -1,145 +1,117 @@
-window.AtlasProgress = (() => {
-  const student = localStorage.getItem("atlasStudent") || "Scholar";
-  const storageKey = "atlasMathProgress::" + student;
+window.AtlasScratchpad = (() => {
+  const canvas = document.getElementById("pad");
+  const padWrap = document.getElementById("padWrap");
+  const context = canvas.getContext("2d");
 
-  function blankProgress() {
+  let drawing = false;
+  let paths = [];
+  let currentPath = [];
+
+  function resizeCanvas() {
+    const rectangle = padWrap.getBoundingClientRect();
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+
+    canvas.width = Math.max(1, Math.round(rectangle.width * pixelRatio));
+    canvas.height = Math.max(1, Math.round(rectangle.height * pixelRatio));
+
+    canvas.style.width = rectangle.width + "px";
+    canvas.style.height = rectangle.height + "px";
+
+    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.strokeStyle = "#24394a";
+    context.lineWidth = 2.2;
+
+    redraw();
+  }
+
+  function pointerPosition(event) {
+    const rectangle = canvas.getBoundingClientRect();
+
     return {
-      coins: 0,
-      streak: 0,
-      total: 0,
-      correct: 0,
-      questions: {},
-      topics: {}
+      x: event.clientX - rectangle.left,
+      y: event.clientY - rectangle.top
     };
   }
 
-  function finiteNumber(value, fallback = 0) {
-    return Number.isFinite(Number(value)) ? Number(value) : fallback;
-  }
+  function redraw() {
+    context.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 
-  function migrate(saved) {
-    const clean = blankProgress();
+    for (const path of paths) {
+      if (path.length < 2) continue;
 
-    if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
-      return clean;
-    }
+      context.beginPath();
+      context.moveTo(path[0].x, path[0].y);
 
-    clean.coins = finiteNumber(saved.coins);
-    clean.streak = finiteNumber(saved.streak);
-    clean.total = finiteNumber(saved.total);
-    clean.correct = finiteNumber(saved.correct);
+      for (let index = 1; index < path.length; index += 1) {
+        context.lineTo(path[index].x, path[index].y);
+      }
 
-    clean.questions =
-      saved.questions && typeof saved.questions === "object" && !Array.isArray(saved.questions)
-        ? saved.questions
-        : {};
-
-    clean.topics =
-      saved.topics && typeof saved.topics === "object" && !Array.isArray(saved.topics)
-        ? saved.topics
-        : {};
-
-    return clean;
-  }
-
-  function load() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey));
-      return migrate(saved);
-    } catch {
-      return blankProgress();
+      context.stroke();
     }
   }
 
-  const progress = load();
+  canvas.addEventListener("pointerdown", event => {
+    drawing = true;
+    currentPath = [pointerPosition(event)];
+    canvas.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  });
 
-  function save() {
-    localStorage.setItem(storageKey, JSON.stringify(progress));
-  }
+  canvas.addEventListener("pointermove", event => {
+    if (!drawing) return;
 
-  function ensureStats(collection, key) {
-    if (!collection || typeof collection !== "object") {
-      throw new TypeError("Atlas progress collection is unavailable.");
+    const point = pointerPosition(event);
+    const previous = currentPath[currentPath.length - 1];
+
+    currentPath.push(point);
+
+    context.beginPath();
+    context.moveTo(previous.x, previous.y);
+    context.lineTo(point.x, point.y);
+    context.stroke();
+
+    event.preventDefault();
+  });
+
+  function finishDrawing(event) {
+    if (!drawing) return;
+
+    drawing = false;
+
+    if (currentPath.length) {
+      paths.push(currentPath);
     }
 
-    const existing = collection[key];
-
-    if (!existing || typeof existing !== "object") {
-      collection[key] = { seen: 0, correct: 0, wrong: 0 };
-    } else {
-      existing.seen = finiteNumber(existing.seen);
-      existing.correct = finiteNumber(existing.correct);
-      existing.wrong = finiteNumber(existing.wrong);
-    }
-
-    return collection[key];
+    currentPath = [];
+    event.preventDefault();
   }
 
-  function record(question, correct) {
-    progress.total += 1;
+  canvas.addEventListener("pointerup", finishDrawing);
+  canvas.addEventListener("pointercancel", finishDrawing);
 
-    const questionStats = ensureStats(progress.questions, question.id);
-    const topicStats = ensureStats(progress.topics, question.t);
+  document.getElementById("clear").addEventListener("click", () => {
+    paths = [];
+    redraw();
+  });
 
-    questionStats.seen += 1;
-    topicStats.seen += 1;
+  document.getElementById("undo").addEventListener("click", () => {
+    paths.pop();
+    redraw();
+  });
 
-    if (correct) {
-      progress.correct += 1;
-      progress.streak += 1;
-      progress.coins += 10;
-      questionStats.correct += 1;
-      topicStats.correct += 1;
-    } else {
-      progress.streak = 0;
-      questionStats.wrong += 1;
-      topicStats.wrong += 1;
-    }
-
-    save();
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(resizeCanvas).observe(padWrap);
+  } else {
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
   }
 
-  function weight(question, lastId) {
-    const questionStats =
-      progress.questions[question.id] || { seen: 0, wrong: 0, correct: 0 };
-    const topicStats =
-      progress.topics[question.t] || { seen: 0, wrong: 0, correct: 0 };
+  window.addEventListener("orientationchange", () => {
+    setTimeout(resizeCanvas, 250);
+  });
 
-    let result = 1;
-
-    if (questionStats.seen === 0) result += 1.5;
-    result += finiteNumber(questionStats.wrong) * 2;
-    result += finiteNumber(topicStats.wrong) * 0.35;
-    result -= finiteNumber(questionStats.correct) * 0.25;
-
-    if (question.id === lastId) result *= 0.12;
-
-    return Math.max(0.15, result);
-  }
-
-  function chooseWeighted(items, lastId) {
-    if (!Array.isArray(items) || !items.length) return null;
-
-    const weights = items.map(question => weight(question, lastId));
-    const totalWeight = weights.reduce((sum, value) => sum + value, 0);
-    let draw = Math.random() * totalWeight;
-
-    for (let index = 0; index < items.length; index += 1) {
-      draw -= weights[index];
-      if (draw <= 0) return items[index];
-    }
-
-    return items[items.length - 1];
-  }
-
-  save();
-
-  return {
-    student,
-    progress,
-    save,
-    record,
-    ensureStats,
-    chooseWeighted
-  };
+  return { redraw };
 })();
+
