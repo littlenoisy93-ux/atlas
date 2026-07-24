@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#2e2033">
+  <title>French · Atlas</title>
+  <link rel="stylesheet" href="styles/language-bridge.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="home" href="index.html">← Atlas</a>
+    <div class="title"><span id="topTitle">✒️ French</span> <span id="studentLabel"></span></div>
+    <div class="stats">🪙 <span id="coins">0</span></div>
+  </header>
+
+  <main class="app">
+    <section class="book-screen" id="bookScreen">
+      <div class="book-cover">
+        <div class="book-emblem" id="bookIcon">✒️</div>
+        <p class="book-kicker">Atlas · Le Scriptorium</p>
+        <h1 id="bookTitle">French</h1>
+        <p class="book-subtitle" id="bookSubtitle">Grammaire douce : comprendre les règles sans paniquer.</p>
+        <button class="continue-book" id="continueBook">Session rapide · 10 questions</button>
+      </div>
+
+      <section class="contents-card">
+        <div class="contents-heading">
+          <div>
+            <p class="eyebrow">Table des matières</p>
+            <h2>Les chapitres</h2>
+          </div>
+          <button class="summary-button" id="summaryBtn">📚 Progrès</button>
+        </div>
+        <div class="chapter-grid" id="chapterGrid"></div>
+        <div class="note">Objectif été : petites sessions faciles, répétées souvent, sans piège.</div>
+      </section>
+    </section>
+
+    <section class="lesson-screen hidden" id="lessonScreen">
+      <div class="lesson-toolbar">
+        <button class="back-to-book" id="backToBook">← Retour au livre</button>
+        <div id="currentChapterLabel">Tous les chapitres</div>
+      </div>
+      <section class="card question">
+        <div class="question-top">
+          <div class="eyebrow" id="topic">Chapitre</div>
+          <div>Session : <span id="sessionCount">0</span>/10</div>
+        </div>
+        <h1 id="prompt">Chargement…</h1>
+        <p class="instruction" id="instruction">Écris une réponse courte.</p>
+        <div class="answer-row">
+          <input id="answer" autocomplete="off" placeholder="Ta réponse">
+          <button class="primary" id="check">Vérifier</button>
+        </div>
+        <div class="tools">
+          <button class="smallbtn" id="hintBtn">💡 Aide</button>
+          <button class="summary-button" id="lessonSummaryBtn">📚 Progrès</button>
+        </div>
+        <div class="hintbox" id="hintbox"></div>
+        <div class="feedback" id="feedback">
+          <strong id="feedbackTitle"></strong>
+          <div class="explanation" id="explanation"></div>
+          <button class="next" id="next">Question suivante</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div class="footer-note">Le progrès est enregistré séparément pour chaque profil sur cet appareil.</div>
+
+  <div class="modal" id="summaryModal" role="dialog" aria-modal="true">
+    <section class="summary-card">
+      <h2 id="summaryTitle">Résumé</h2>
+      <div class="topic-line"><span>Réponses</span><strong id="sumAnswered">0</strong></div>
+      <div class="topic-line"><span>Réussite</span><strong id="sumAccuracy">—</strong></div>
+      <div class="topic-line"><span>Pièces</span><strong id="sumCoins">0</strong></div>
+      <h3>Par chapitre</h3>
+      <div id="topicSummary"></div>
+      <div class="tools">
+        <button class="next" id="continueBtn">Fermer</button>
+        <button class="smallbtn" id="newSessionBtn">Nouvelle session</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    window.ATLAS_LANGUAGE_CONFIG = {
+      key: "french",
+      title: "French",
+      icon: "✒️",
+      subtitle: "Grammaire douce : comprendre les règles sans paniquer.",
+      cover1: "#874755",
+      cover2: "#522634"
+    };
+  </script>
+  <script src="js/french-questions.js"></script>
+  <script src="js/language-bridge.js"></script>
+</body>
+</html>
