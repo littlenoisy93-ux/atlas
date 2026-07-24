@@ -13,9 +13,39 @@ window.AtlasProgress = (() => {
     };
   }
 
+  function finiteNumber(value, fallback = 0) {
+    return Number.isFinite(Number(value)) ? Number(value) : fallback;
+  }
+
+  function migrate(saved) {
+    const clean = blankProgress();
+
+    if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
+      return clean;
+    }
+
+    clean.coins = finiteNumber(saved.coins);
+    clean.streak = finiteNumber(saved.streak);
+    clean.total = finiteNumber(saved.total);
+    clean.correct = finiteNumber(saved.correct);
+
+    clean.questions =
+      saved.questions && typeof saved.questions === "object" && !Array.isArray(saved.questions)
+        ? saved.questions
+        : {};
+
+    clean.topics =
+      saved.topics && typeof saved.topics === "object" && !Array.isArray(saved.topics)
+        ? saved.topics
+        : {};
+
+    return clean;
+  }
+
   function load() {
     try {
-      return JSON.parse(localStorage.getItem(storageKey)) || blankProgress();
+      const saved = JSON.parse(localStorage.getItem(storageKey));
+      return migrate(saved);
     } catch {
       return blankProgress();
     }
@@ -28,9 +58,20 @@ window.AtlasProgress = (() => {
   }
 
   function ensureStats(collection, key) {
-    if (!collection[key]) {
-      collection[key] = { seen: 0, correct: 0, wrong: 0 };
+    if (!collection || typeof collection !== "object") {
+      throw new TypeError("Atlas progress collection is unavailable.");
     }
+
+    const existing = collection[key];
+
+    if (!existing || typeof existing !== "object") {
+      collection[key] = { seen: 0, correct: 0, wrong: 0 };
+    } else {
+      existing.seen = finiteNumber(existing.seen);
+      existing.correct = finiteNumber(existing.correct);
+      existing.wrong = finiteNumber(existing.wrong);
+    }
+
     return collection[key];
   }
 
@@ -64,22 +105,24 @@ window.AtlasProgress = (() => {
     const topicStats =
       progress.topics[question.t] || { seen: 0, wrong: 0, correct: 0 };
 
-    let weight = 1;
+    let result = 1;
 
-    if (questionStats.seen === 0) weight += 1.5;
-    weight += questionStats.wrong * 2;
-    weight += topicStats.wrong * 0.35;
-    weight -= questionStats.correct * 0.25;
+    if (questionStats.seen === 0) result += 1.5;
+    result += finiteNumber(questionStats.wrong) * 2;
+    result += finiteNumber(topicStats.wrong) * 0.35;
+    result -= finiteNumber(questionStats.correct) * 0.25;
 
-    if (question.id === lastId) weight *= 0.12;
+    if (question.id === lastId) result *= 0.12;
 
-    return Math.max(0.15, weight);
+    return Math.max(0.15, result);
   }
 
   function chooseWeighted(items, lastId) {
+    if (!Array.isArray(items) || !items.length) return null;
+
     const weights = items.map(question => weight(question, lastId));
-    const total = weights.reduce((sum, value) => sum + value, 0);
-    let draw = Math.random() * total;
+    const totalWeight = weights.reduce((sum, value) => sum + value, 0);
+    let draw = Math.random() * totalWeight;
 
     for (let index = 0; index < items.length; index += 1) {
       draw -= weights[index];
@@ -88,6 +131,8 @@ window.AtlasProgress = (() => {
 
     return items[items.length - 1];
   }
+
+  save();
 
   return {
     student,
@@ -98,4 +143,3 @@ window.AtlasProgress = (() => {
     chooseWeighted
   };
 })();
-
