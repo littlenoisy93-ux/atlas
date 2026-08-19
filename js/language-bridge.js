@@ -41,13 +41,56 @@
     return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
 
-  function normalise(value) {
-    return stripAccents(String(value))
+  function clean(value, keepAccents = false) {
+    const base = String(value)
       .toLowerCase()
       .trim()
       .replace(/[’']/g, "'")
       .replace(/[¿?¡!.,;:]/g, "")
       .replace(/\s+/g, " ");
+    return keepAccents ? base : stripAccents(base);
+  }
+
+  function withoutSubjectPronoun(value) {
+    return value.replace(/^(yo|tú|tu|él|el|ella|nosotros|nosotras|vosotros|vosotras|ellos|ellas)\s+/, "");
+  }
+
+  function answerForms(value, keepAccents = false) {
+    const base = clean(value, keepAccents);
+    const noPronoun = withoutSubjectPronoun(base);
+    return [...new Set([base, noPronoun])];
+  }
+
+  function infinitiveFromPrompt() {
+    const match = String(current?.q || "").match(/Conjugate\s+([a-záéíóúñ]+):/i);
+    return match ? clean(match[1]) : "";
+  }
+
+  function evaluateAnswer(userRaw, answers) {
+    const userForms = answerForms(userRaw, false);
+    const answerNoAccent = answers.flatMap(a => answerForms(a, false));
+    const answerWithAccent = answers.flatMap(a => answerForms(a, true));
+
+    if (userForms.some(u => answerNoAccent.includes(u))) {
+      const userAccentedForms = answerForms(userRaw, true);
+      const accentExact = userAccentedForms.some(u => answerWithAccent.includes(u));
+      const accentNeeded = answers.some(a => clean(a, true) !== clean(a, false));
+      return {
+        correct: true,
+        accentWarning: accentNeeded && !accentExact
+      };
+    }
+
+    const infinitive = infinitiveFromPrompt();
+    if (infinitive && userForms.includes(infinitive)) {
+      const first = answers[0];
+      return {
+        correct: false,
+        almost: `Presque — “${infinitive}” est l’infinitif. Ici, il faut la forme conjuguée : ${first}.`
+      };
+    }
+
+    return { correct: false };
   }
 
   function chapters() {
@@ -141,12 +184,20 @@
     if (answered || !current || !$("answer").value.trim()) return;
     answered = true;
     const answers = Array.isArray(current.a) ? current.a : [current.a];
-    const user = normalise($("answer").value);
-    const correct = answers.some(a => normalise(a) === user);
+    const result = evaluateAnswer($("answer").value, answers);
+    const correct = result.correct;
 
     $("feedback").className = "feedback show " + (correct ? "good" : "bad");
-    $("feedbackTitle").textContent = correct ? "✓ Bravo !" : "Pas encore.";
-    $("explanation").textContent = current.r || "";
+    if (correct && result.accentWarning) {
+      $("feedbackTitle").textContent = "✓ Bravo — attention à l’accent !";
+      $("explanation").textContent = (current.r || "") + " N’oublie pas l’accent dans la réponse modèle.";
+    } else if (result.almost) {
+      $("feedbackTitle").textContent = "Presque.";
+      $("explanation").textContent = result.almost;
+    } else {
+      $("feedbackTitle").textContent = correct ? "✓ Bravo !" : "Pas encore.";
+      $("explanation").textContent = current.r || "";
+    }
     $("check").disabled = true;
 
     progress.total += 1;
@@ -165,6 +216,7 @@
     $("coins").textContent = progress.coins || 0;
     $("sessionCount").textContent = session.answered;
     $("next").textContent = session.answered >= 10 ? "Voir le résumé" : "Question suivante";
+    setTimeout(() => $("next").focus(), 50);
   }
 
   function percent(c,t) { return t ? Math.round(c/t*100) + " %" : "—"; }
@@ -196,10 +248,26 @@
   $("topTitle").textContent = (config.icon || "✒️") + " " + (config.title || "Language");
   $("studentLabel").textContent = "· " + student;
 
+  const answerInput = $("answer");
+  answerInput.setAttribute("autocomplete", "off");
+  answerInput.setAttribute("autocorrect", "off");
+  answerInput.setAttribute("autocapitalize", "none");
+  answerInput.setAttribute("spellcheck", "false");
+  answerInput.setAttribute("lang", config.inputLang || config.key || "");
+
   $("continueBook").addEventListener("click", () => openLesson("Tous"));
   $("backToBook").addEventListener("click", closeLesson);
   $("check").addEventListener("click", checkAnswer);
-  $("answer").addEventListener("keydown", e => { if (e.key === "Enter") checkAnswer(); });
+  $("answer").addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (answered) {
+        session.answered >= 10 ? showSummary(true) : newQuestion();
+      } else {
+        checkAnswer();
+      }
+    }
+  });
   $("next").addEventListener("click", () => session.answered >= 10 ? showSummary(true) : newQuestion());
   $("hintBtn").addEventListener("click", () => {
     $("hintbox").textContent = current.h || "Relis bien la consigne.";
