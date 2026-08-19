@@ -169,3 +169,59 @@ button, input { font: inherit; }
 
 .stem { color: var(--green); font-weight: 800; }
 .ending { color: #a66a15; font-weight: 900; }
+
+
+.lesson-reference {
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  border: 1px solid #d9c58f;
+  border-radius: 18px;
+  background: #fffdf6;
+  box-shadow: 0 10px 24px rgba(62,42,25,.10);
+}
+
+.lesson-reference summary {
+  cursor: pointer;
+  font-weight: 900;
+  color: var(--purple);
+}
+
+.reference-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.mini-conj-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.mini-conj-table th,
+.mini-conj-table td {
+  border-bottom: 1px solid #ead9b8;
+  padding: 6px 7px;
+  text-align: left;
+}
+
+.mini-conj-table th {
+  color: var(--muted);
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.reference-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
+@media (max-width: 760px) {
+  .reference-grid { grid-template-columns: 1fr; }
+}
