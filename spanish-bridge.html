@@ -2,26 +2,44 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#2e2033">
-  <title>Spanish · Atlas</title>
-  <link rel="stylesheet" href="styles/language-bridge.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#24394a">
+  <title>Maths Bridge · Atlas</title>
+  <link rel="stylesheet" href="styles/maths-bridge.css">
 </head>
 <body>
   <header class="topbar">
     <a class="home" href="index.html">← Atlas</a>
-    <div class="title"><span id="topTitle">🗺️ Spanish</span> <span id="studentLabel"></span></div>
-    <div class="stats">🪙 <span id="coins">0</span></div>
+    <div class="title">
+      📖 Maths Bridge <span class="student" id="studentLabel"></span>
+    </div>
+    <div class="stats">
+      🔥 <span id="streak">0</span> · 🪙 <span id="coins">0</span>
+    </div>
   </header>
 
   <main class="app">
     <section class="book-screen" id="bookScreen">
       <div class="book-cover">
-        <div class="book-emblem" id="bookIcon">🗺️</div>
+        <div class="book-emblem">✦</div>
         <p class="book-kicker">Atlas · Le Scriptorium</p>
-        <h1 id="bookTitle">Spanish</h1>
-        <p class="book-subtitle" id="bookSubtitle">Vocabulaire et verbes de base pour redémarrer tranquillement.</p>
-        <button class="continue-book" id="continueBook">Session rapide · 10 questions</button>
+        <h1>Mathématiques</h1>
+        <p class="book-subtitle">Chaque théorème ouvre une nouvelle porte.</p>
+        <div class="book-owl">🦉</div>
+
+        <div class="overall-progress">
+          <div class="progress-heading">
+            <span>Progression générale</span>
+            <strong id="overallPercent">0 %</strong>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="overallBar"></div>
+          </div>
+        </div>
+
+        <button class="continue-book" id="continueBook">
+          Continuer l’étude
+        </button>
       </div>
 
       <section class="contents-card">
@@ -32,69 +50,138 @@
           </div>
           <button class="summary-button" id="summaryBtn">📚 Progrès</button>
         </div>
-        <div class="chapter-grid" id="chapterGrid"></div>
-        <div class="note">Objectif été : petites sessions faciles, répétées souvent, sans piège.</div>
+
+        <div class="chapter-grid" id="bookChapters"></div>
+
+        <div class="book-note">
+          Atlas fera revenir plus souvent les notions qui ont besoin
+          d’un peu plus d’entraînement.
+        </div>
       </section>
     </section>
 
     <section class="lesson-screen hidden" id="lessonScreen">
       <div class="lesson-toolbar">
         <button class="back-to-book" id="backToBook">← Retour au livre</button>
-        <div id="currentChapterLabel">Tous les chapitres</div>
+        <div class="current-chapter-label" id="currentChapterLabel">Tous les chapitres</div>
       </div>
+
       <section class="card question">
         <div class="question-top">
-          <div class="eyebrow" id="topic">Chapitre</div>
-          <div>Session : <span id="sessionCount">0</span>/10</div>
+          <div class="eyebrow" id="topic">Nombres</div>
+          <div class="session">
+            Session : <span id="sessionCount">0</span>/10
+          </div>
         </div>
+
         <h1 id="prompt">Chargement…</h1>
-        <p class="instruction" id="instruction">Écris une réponse courte.</p>
+
+        <p class="answer-instruction" id="instruction">Réponds avec un nombre ou une expression courte.</p>
+
         <div class="answer-row">
-          <input id="answer" autocomplete="off" placeholder="Ta réponse">
+          <input
+            id="answer"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="none"
+            spellcheck="false"
+            inputmode="decimal"
+            placeholder="Ta réponse"
+          >
           <button class="primary" id="check">Vérifier</button>
         </div>
+
+        <div class="math-symbol-bar" aria-label="Symboles mathématiques">
+          <button type="button" data-symbol="/">/</button>
+          <button type="button" data-symbol="×">×</button>
+          <button type="button" data-symbol="−">−</button>
+          <button type="button" data-symbol="+">+</button>
+          <button type="button" data-symbol="=">=</button>
+          <button type="button" data-symbol="%">%</button>
+          <button type="button" data-symbol="€">€</button>
+          <button type="button" data-symbol="x">x</button>
+          <button type="button" data-symbol="²">²</button>
+          <button type="button" data-symbol="(">(</button>
+          <button type="button" data-symbol=")">)</button>
+        </div>
+
         <div class="tools">
-          <button class="smallbtn" id="hintBtn">💡 Aide</button>
+          <button class="tool" id="reminderBtn">💡 Rappel</button>
+          <button class="tool" id="calculatorBtn">🧮 Calculatrice</button>
           <button class="summary-button" id="lessonSummaryBtn">📚 Progrès</button>
         </div>
-        <div class="hintbox" id="hintbox"></div>
+
+        <div class="reminder" id="reminder"></div>
+
         <div class="feedback" id="feedback">
           <strong id="feedbackTitle"></strong>
           <div class="explanation" id="explanation"></div>
           <button class="next" id="next">Question suivante</button>
         </div>
+
+        <div class="adaptive-note" id="adaptiveNote">
+          Atlas mélange les sujets et fera revenir plus souvent les notions
+          qui ont besoin d’entraînement.
+        </div>
+      </section>
+
+      <section class="card workspace">
+        <div class="workspace-head">
+          <strong>Feuille de brouillon</strong>
+          <button class="smallbtn" id="undo">↶ Annuler</button>
+          <button class="smallbtn" id="clear">Effacer</button>
+        </div>
+
+        <div class="pad-wrap" id="padWrap">
+          <canvas id="pad"></canvas>
+          <div class="hint">
+            Écris avec ton doigt, l’Apple Pencil ou la souris.
+          </div>
+        </div>
+
+        <div class="calculator" id="calculator">
+          <input class="calc-display" id="calcDisplay" readonly value="0">
+          <div class="keys" id="keys"></div>
+        </div>
       </section>
     </section>
   </main>
 
-  <div class="footer-note">Le progrès est enregistré séparément pour chaque profil sur cet appareil.</div>
+  <div class="footer-note">
+    Le progrès est enregistré séparément pour chaque profil sur cet appareil.
+  </div>
 
   <div class="modal" id="summaryModal" role="dialog" aria-modal="true">
     <section class="summary-card">
       <h2 id="summaryTitle">Résumé</h2>
-      <div class="topic-line"><span>Réponses</span><strong id="sumAnswered">0</strong></div>
-      <div class="topic-line"><span>Réussite</span><strong id="sumAccuracy">—</strong></div>
-      <div class="topic-line"><span>Pièces</span><strong id="sumCoins">0</strong></div>
+      <p id="summaryIntro"></p>
+
+      <div class="summary-grid">
+        <div class="summary-stat">
+          <strong id="sumAnswered">0</strong><br>réponses
+        </div>
+        <div class="summary-stat">
+          <strong id="sumAccuracy">—</strong><br>réussite
+        </div>
+        <div class="summary-stat">
+          <strong id="sumCoins">0</strong><br>pièces
+        </div>
+      </div>
+
       <h3>Par chapitre</h3>
-      <div id="topicSummary"></div>
-      <div class="tools">
+      <div class="topic-list" id="topicSummary"></div>
+
+      <div class="summary-actions">
         <button class="next" id="continueBtn">Fermer</button>
         <button class="smallbtn" id="newSessionBtn">Nouvelle session</button>
       </div>
     </section>
   </div>
 
-  <script>
-    window.ATLAS_LANGUAGE_CONFIG = {
-      key: "spanish",
-      title: "Spanish",
-      icon: "🗺️",
-      subtitle: "Vocabulaire et verbes de base pour redémarrer tranquillement.",
-      cover1: "#aa6b27",
-      cover2: "#714114"
-    };
-  </script>
-  <script src="js/spanish-questions.js"></script>
-  <script src="js/language-bridge.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/scratchpad.js"></script>
+  <script src="js/maths-bridge.js"></script>
 </body>
 </html>
