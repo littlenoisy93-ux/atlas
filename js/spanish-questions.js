@@ -96,7 +96,8 @@ window.ATLAS_LANGUAGE_QUESTIONS = [
     "t": "Verbos en -ar",
     "q": "Conjugate hablar: yo ___",
     "a": [
-      "hablo"
+      "hablo",
+      "yo hablo"
     ],
     "r": "Yo hablo.",
     "h": "For regular -ar verbs: yo = -o.",
@@ -151,7 +152,8 @@ window.ATLAS_LANGUAGE_QUESTIONS = [
     "t": "Verbos en -ar",
     "q": "Conjugate comprar: yo ___",
     "a": [
-      "compro"
+      "compro",
+      "yo compro"
     ],
     "r": "Yo compro.",
     "h": "Yo = -o.",
@@ -344,7 +346,8 @@ window.ATLAS_LANGUAGE_QUESTIONS = [
     "t": "Frases útiles",
     "q": "How do you say “I don’t understand” in Spanish?",
     "a": [
-      "no entiendo"
+      "no entiendo",
+      "yo no entiendo"
     ],
     "r": "I don’t understand = no entiendo.",
     "h": "Entender = to understand.",
