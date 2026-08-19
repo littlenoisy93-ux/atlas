@@ -2,44 +2,26 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#24394a">
-  <title>Maths Bridge · Atlas</title>
-  <link rel="stylesheet" href="styles/maths-bridge.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#2e2033">
+  <title>Spanish · Atlas</title>
+  <link rel="stylesheet" href="styles/language-bridge.css">
 </head>
 <body>
   <header class="topbar">
     <a class="home" href="index.html">← Atlas</a>
-    <div class="title">
-      📖 Maths Bridge <span class="student" id="studentLabel"></span>
-    </div>
-    <div class="stats">
-      🔥 <span id="streak">0</span> · 🪙 <span id="coins">0</span>
-    </div>
+    <div class="title"><span id="topTitle">🗺️ Spanish</span> <span id="studentLabel"></span></div>
+    <div class="stats">🪙 <span id="coins">0</span></div>
   </header>
 
   <main class="app">
     <section class="book-screen" id="bookScreen">
       <div class="book-cover">
-        <div class="book-emblem">✦</div>
+        <div class="book-emblem" id="bookIcon">🗺️</div>
         <p class="book-kicker">Atlas · Le Scriptorium</p>
-        <h1>Mathématiques</h1>
-        <p class="book-subtitle">Chaque théorème ouvre une nouvelle porte.</p>
-        <div class="book-owl">🦉</div>
-
-        <div class="overall-progress">
-          <div class="progress-heading">
-            <span>Progression générale</span>
-            <strong id="overallPercent">0 %</strong>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" id="overallBar"></div>
-          </div>
-        </div>
-
-        <button class="continue-book" id="continueBook">
-          Continuer l’étude
-        </button>
+        <h1 id="bookTitle">Spanish</h1>
+        <p class="book-subtitle" id="bookSubtitle">Vocabulaire et verbes de base pour redémarrer tranquillement.</p>
+        <button class="continue-book" id="continueBook">Session rapide · 10 questions</button>
       </div>
 
       <section class="contents-card">
@@ -51,137 +33,139 @@
           <button class="summary-button" id="summaryBtn">📚 Progrès</button>
         </div>
 
-        <div class="chapter-grid" id="bookChapters"></div>
+        <div class="study-pages">
+          <details class="study-card" open>
+            <summary>📘 Étude 1 · Verbes réguliers en -AR</summary>
+            <p class="conjugation-note">Exemple : <strong>hablar</strong>. On enlève <strong>-ar</strong> → racine <span class="stem">habl-</span>, puis on ajoute la terminaison.</p>
+            <table class="conj-table">
+              <tr><th>Pronom</th><th>Forme</th><th>Terminaison</th></tr>
+              <tr><td>yo</td><td><span class="stem">habl</span><span class="ending">o</span></td><td>-o</td></tr>
+              <tr><td>tú</td><td><span class="stem">habl</span><span class="ending">as</span></td><td>-as</td></tr>
+              <tr><td>él / ella</td><td><span class="stem">habl</span><span class="ending">a</span></td><td>-a</td></tr>
+              <tr><td>nosotros</td><td><span class="stem">habl</span><span class="ending">amos</span></td><td>-amos</td></tr>
+              <tr><td>vosotros</td><td><span class="stem">habl</span><span class="ending">áis</span></td><td>-áis</td></tr>
+              <tr><td>ellos / ellas</td><td><span class="stem">habl</span><span class="ending">an</span></td><td>-an</td></tr>
+            </table>
+          </details>
 
-        <div class="book-note">
-          Atlas fera revenir plus souvent les notions qui ont besoin
-          d’un peu plus d’entraînement.
+          <details class="study-card">
+            <summary>📗 Étude 2 · Verbes réguliers en -ER</summary>
+            <p class="conjugation-note">Exemple : <strong>comer</strong>. On enlève <strong>-er</strong> → racine <span class="stem">com-</span>.</p>
+            <table class="conj-table">
+              <tr><th>Pronom</th><th>Forme</th><th>Terminaison</th></tr>
+              <tr><td>yo</td><td><span class="stem">com</span><span class="ending">o</span></td><td>-o</td></tr>
+              <tr><td>tú</td><td><span class="stem">com</span><span class="ending">es</span></td><td>-es</td></tr>
+              <tr><td>él / ella</td><td><span class="stem">com</span><span class="ending">e</span></td><td>-e</td></tr>
+              <tr><td>nosotros</td><td><span class="stem">com</span><span class="ending">emos</span></td><td>-emos</td></tr>
+              <tr><td>vosotros</td><td><span class="stem">com</span><span class="ending">éis</span></td><td>-éis</td></tr>
+              <tr><td>ellos / ellas</td><td><span class="stem">com</span><span class="ending">en</span></td><td>-en</td></tr>
+            </table>
+          </details>
+
+          <details class="study-card">
+            <summary>📙 Étude 3 · Verbes réguliers en -IR</summary>
+            <p class="conjugation-note">Exemple : <strong>vivir</strong>. On enlève <strong>-ir</strong> → racine <span class="stem">viv-</span>.</p>
+            <table class="conj-table">
+              <tr><th>Pronom</th><th>Forme</th><th>Terminaison</th></tr>
+              <tr><td>yo</td><td><span class="stem">viv</span><span class="ending">o</span></td><td>-o</td></tr>
+              <tr><td>tú</td><td><span class="stem">viv</span><span class="ending">es</span></td><td>-es</td></tr>
+              <tr><td>él / ella</td><td><span class="stem">viv</span><span class="ending">e</span></td><td>-e</td></tr>
+              <tr><td>nosotros</td><td><span class="stem">viv</span><span class="ending">imos</span></td><td>-imos</td></tr>
+              <tr><td>vosotros</td><td><span class="stem">viv</span><span class="ending">ís</span></td><td>-ís</td></tr>
+              <tr><td>ellos / ellas</td><td><span class="stem">viv</span><span class="ending">en</span></td><td>-en</td></tr>
+            </table>
+          </details>
+
+          <details class="study-card">
+            <summary>🧭 Étude 4 · Grille de comparaison</summary>
+            <table class="conj-table">
+              <tr><th>Pronom</th><th>-AR</th><th>-ER</th><th>-IR</th></tr>
+              <tr><td>yo</td><td>-o</td><td>-o</td><td>-o</td></tr>
+              <tr><td>tú</td><td>-as</td><td>-es</td><td>-es</td></tr>
+              <tr><td>él / ella</td><td>-a</td><td>-e</td><td>-e</td></tr>
+              <tr><td>nosotros</td><td>-amos</td><td>-emos</td><td>-imos</td></tr>
+              <tr><td>vosotros</td><td>-áis</td><td>-éis</td><td>-ís</td></tr>
+              <tr><td>ellos / ellas</td><td>-an</td><td>-en</td><td>-en</td></tr>
+            </table>
+          </details>
+
+          <details class="study-card">
+            <summary>⭐ Étude 5 · Ser / estar / tener</summary>
+            <table class="conj-table">
+              <tr><th>Pronom</th><th>ser</th><th>estar</th><th>tener</th></tr>
+              <tr><td>yo</td><td>soy</td><td>estoy</td><td>tengo</td></tr>
+              <tr><td>tú</td><td>eres</td><td>estás</td><td>tienes</td></tr>
+              <tr><td>él / ella</td><td>es</td><td>está</td><td>tiene</td></tr>
+              <tr><td>nosotros</td><td>somos</td><td>estamos</td><td>tenemos</td></tr>
+              <tr><td>vosotros</td><td>sois</td><td>estáis</td><td>tenéis</td></tr>
+              <tr><td>ellos / ellas</td><td>son</td><td>están</td><td>tienen</td></tr>
+            </table>
+          </details>
         </div>
+        <div class="chapter-grid" id="chapterGrid"></div>
+        <div class="note">Objectif été : petites sessions faciles, répétées souvent, sans piège.</div>
       </section>
     </section>
 
     <section class="lesson-screen hidden" id="lessonScreen">
       <div class="lesson-toolbar">
         <button class="back-to-book" id="backToBook">← Retour au livre</button>
-        <div class="current-chapter-label" id="currentChapterLabel">Tous les chapitres</div>
+        <div id="currentChapterLabel">Tous les chapitres</div>
       </div>
-
       <section class="card question">
         <div class="question-top">
-          <div class="eyebrow" id="topic">Nombres</div>
-          <div class="session">
-            Session : <span id="sessionCount">0</span>/10
-          </div>
+          <div class="eyebrow" id="topic">Chapitre</div>
+          <div>Session : <span id="sessionCount">0</span>/10</div>
         </div>
-
         <h1 id="prompt">Chargement…</h1>
-
-        <p class="answer-instruction" id="instruction">Réponds avec un nombre ou une expression courte.</p>
-
+        <p class="instruction" id="instruction">Écris une réponse courte.</p>
         <div class="answer-row">
-          <input
-            id="answer"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="none"
-            spellcheck="false"
-            inputmode="decimal"
-            placeholder="Ta réponse"
-          >
+          <input id="answer" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" lang="es" placeholder="Ta réponse">
           <button class="primary" id="check">Vérifier</button>
         </div>
-
-        <div class="math-symbol-bar" aria-label="Symboles mathématiques">
-          <button type="button" data-symbol="/">/</button>
-          <button type="button" data-symbol="×">×</button>
-          <button type="button" data-symbol="−">−</button>
-          <button type="button" data-symbol="+">+</button>
-          <button type="button" data-symbol="=">=</button>
-          <button type="button" data-symbol="%">%</button>
-          <button type="button" data-symbol="€">€</button>
-          <button type="button" data-symbol="x">x</button>
-          <button type="button" data-symbol="²">²</button>
-          <button type="button" data-symbol="(">(</button>
-          <button type="button" data-symbol=")">)</button>
-        </div>
-
         <div class="tools">
-          <button class="tool" id="reminderBtn">💡 Rappel</button>
-          <button class="tool" id="calculatorBtn">🧮 Calculatrice</button>
+          <button class="smallbtn" id="hintBtn">💡 Aide</button>
           <button class="summary-button" id="lessonSummaryBtn">📚 Progrès</button>
         </div>
-
-        <div class="reminder" id="reminder"></div>
-
+        <div class="hintbox" id="hintbox"></div>
         <div class="feedback" id="feedback">
           <strong id="feedbackTitle"></strong>
           <div class="explanation" id="explanation"></div>
           <button class="next" id="next">Question suivante</button>
         </div>
-
-        <div class="adaptive-note" id="adaptiveNote">
-          Atlas mélange les sujets et fera revenir plus souvent les notions
-          qui ont besoin d’entraînement.
-        </div>
-      </section>
-
-      <section class="card workspace">
-        <div class="workspace-head">
-          <strong>Feuille de brouillon</strong>
-          <button class="smallbtn" id="undo">↶ Annuler</button>
-          <button class="smallbtn" id="clear">Effacer</button>
-        </div>
-
-        <div class="pad-wrap" id="padWrap">
-          <canvas id="pad"></canvas>
-          <div class="hint">
-            Écris avec ton doigt, l’Apple Pencil ou la souris.
-          </div>
-        </div>
-
-        <div class="calculator" id="calculator">
-          <input class="calc-display" id="calcDisplay" readonly value="0">
-          <div class="keys" id="keys"></div>
-        </div>
       </section>
     </section>
   </main>
 
-  <div class="footer-note">
-    Le progrès est enregistré séparément pour chaque profil sur cet appareil.
-  </div>
+  <div class="footer-note">Le progrès est enregistré séparément pour chaque profil sur cet appareil.</div>
 
   <div class="modal" id="summaryModal" role="dialog" aria-modal="true">
     <section class="summary-card">
       <h2 id="summaryTitle">Résumé</h2>
-      <p id="summaryIntro"></p>
-
-      <div class="summary-grid">
-        <div class="summary-stat">
-          <strong id="sumAnswered">0</strong><br>réponses
-        </div>
-        <div class="summary-stat">
-          <strong id="sumAccuracy">—</strong><br>réussite
-        </div>
-        <div class="summary-stat">
-          <strong id="sumCoins">0</strong><br>pièces
-        </div>
-      </div>
-
+      <div class="topic-line"><span>Réponses</span><strong id="sumAnswered">0</strong></div>
+      <div class="topic-line"><span>Réussite</span><strong id="sumAccuracy">—</strong></div>
+      <div class="topic-line"><span>Pièces</span><strong id="sumCoins">0</strong></div>
       <h3>Par chapitre</h3>
-      <div class="topic-list" id="topicSummary"></div>
-
-      <div class="summary-actions">
+      <div id="topicSummary"></div>
+      <div class="tools">
         <button class="next" id="continueBtn">Fermer</button>
         <button class="smallbtn" id="newSessionBtn">Nouvelle session</button>
       </div>
     </section>
   </div>
 
-  <script src="js/questions.js"></script>
-  <script src="js/progress.js"></script>
-  <script src="js/calculator.js"></script>
-  <script src="js/scratchpad.js"></script>
-  <script src="js/maths-bridge.js"></script>
+  <script>
+    window.ATLAS_LANGUAGE_CONFIG = {
+      key: "spanish",
+      title: "Spanish",
+      icon: "🗺️",
+      subtitle: "Vocabulaire et verbes de base pour redémarrer tranquillement.",
+      cover1: "#aa6b27",
+      cover2: "#714114",
+      inputLang: "es"
+    };
+  </script>
+  <script src="js/spanish-questions.js"></script>
+  <script src="js/language-bridge.js"></script>
 </body>
 </html>
