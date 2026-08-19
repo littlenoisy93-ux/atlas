@@ -188,6 +188,16 @@
     window.scrollTo(0, 0);
   }
 
+
+  function insertAtCursor(input, text) {
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    input.value = input.value.slice(0, start) + text + input.value.slice(end);
+    const next = start + text.length;
+    input.focus();
+    input.setSelectionRange(next, next);
+  }
+
   function normalise(value) {
     return String(value)
       .toLowerCase()
@@ -336,6 +346,12 @@
   $("backToBook").addEventListener("click", closeLesson);
 
   $("check").addEventListener("click", checkAnswer);
+
+  document.querySelectorAll(".math-symbol-bar button").forEach(button => {
+    button.addEventListener("click", () => {
+      insertAtCursor($("answer"), button.dataset.symbol || button.textContent);
+    });
+  });
 
   $("answer").addEventListener("keydown", event => {
     if (event.key === "Enter") {
