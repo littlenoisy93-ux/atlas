@@ -8,6 +8,7 @@
   let selected = "Tous";
   let current = null;
   let lastId = "";
+  let usedIds = [];
   let answered = false;
   let session = { answered: 0, correct: 0, topics: {} };
 
@@ -101,6 +102,7 @@
     session = { answered: 0, correct: 0, topics: {} };
     current = null;
     lastId = "";
+    usedIds = [];
     answered = false;
   }
 
@@ -110,7 +112,9 @@
   }
 
   function chooseQuestion() {
-    const items = pool();
+    const allItems = pool();
+    const freshItems = allItems.filter(q => !usedIds.includes(q.id));
+    const items = freshItems.length ? freshItems : allItems;
     const weights = items.map(q => {
       const qs = progress.questions[q.id] || { seen: 0, wrong: 0, correct: 0 };
       let w = 1;
@@ -168,6 +172,7 @@
     }
     current = chooseQuestion();
     lastId = current.id;
+    usedIds.push(current.id);
     answered = false;
     $("topic").textContent = current.t;
     $("prompt").textContent = current.q;
