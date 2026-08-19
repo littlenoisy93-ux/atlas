@@ -85,12 +85,12 @@ button, input { font: inherit; }
 .instruction { color:var(--muted); font-style:italic; margin: 0 0 16px; }
 .answer-row { display:flex; gap:10px; align-items:stretch; }
 #answer { flex:1; min-width:0; border:2px solid #d8c28c; border-radius:14px; padding:15px; background:white; }
-.primary { border:0; border-radius:14px; padding:0 18px; color:white; background:var(--green); font-weight:700; }
+.primary { border:0; border-radius:14px; padding:0 22px; color:white; background:var(--green); font-weight:800; box-shadow:0 4px 0 rgba(0,0,0,.14); }
 .tools { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
-.feedback, .hintbox { display:none; margin-top:16px; padding:16px; border-radius:15px; background:#f6ecd4; }
+.feedback, .hintbox { display:none; margin-top:16px; padding:18px; border-radius:15px; background:#fff2bf; box-shadow: inset 0 0 0 1px rgba(196,155,72,.25); }
 .feedback.show, .hintbox.show { display:block; }
-.feedback.good { border-left:7px solid var(--green); }
-.feedback.bad { border-left:7px solid var(--red); }
+.feedback.good { border-left:9px solid var(--green); background:#eaf7df; }
+.feedback.bad { border-left:9px solid var(--red); background:#fff0cf; }
 .explanation { margin:8px 0 14px; line-height:1.45; }
 .modal { display:none; position:fixed; inset:0; z-index:20; padding:24px; background:rgba(24,16,20,.55); overflow:auto; }
 .modal.open { display:grid; place-items:center; }
@@ -106,3 +106,66 @@ button, input { font: inherit; }
   .answer-row { flex-direction:column; }
   .primary { padding:14px 18px; }
 }
+
+.next {
+  padding: 13px 22px;
+  border-radius: 999px;
+  background: #f7f7f7;
+  border: 1px solid rgba(0,0,0,.16);
+  font-weight: 800;
+  font-size: 1.05rem;
+  box-shadow: 0 2px 0 rgba(0,0,0,.12);
+}
+
+.feedback .next {
+  margin-top: 6px;
+  min-width: 190px;
+}
+
+.study-pages {
+  display: grid;
+  gap: 14px;
+  margin: 0 0 20px;
+}
+
+.study-card {
+  border: 1px solid #dcc896;
+  border-radius: 18px;
+  background: #fffdf6;
+  padding: 16px;
+}
+
+.study-card summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--purple);
+}
+
+.conjugation-note {
+  margin: 10px 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.conj-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: .96rem;
+}
+
+.conj-table th, .conj-table td {
+  border-bottom: 1px solid #ead9b8;
+  padding: 7px 6px;
+  text-align: left;
+}
+
+.conj-table th {
+  color: var(--muted);
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+
+.stem { color: var(--green); font-weight: 800; }
+.ending { color: #a66a15; font-weight: 900; }
