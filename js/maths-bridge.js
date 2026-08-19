@@ -6,6 +6,7 @@
   let selected = "Tous";
   let current = null;
   let lastId = "";
+  let usedIds = [];
   let answered = false;
 
   let session = {
@@ -131,6 +132,7 @@
     current = null;
     answered = false;
     lastId = "";
+    usedIds = [];
   }
 
   function newQuestion() {
@@ -139,8 +141,12 @@
       return;
     }
 
-    current = Progress.chooseWeighted(pool(), lastId);
+    const allItems = pool();
+    const freshItems = allItems.filter(q => !usedIds.includes(q.id));
+    const items = freshItems.length ? freshItems : allItems;
+    current = Progress.chooseWeighted(items, lastId);
     lastId = current.id;
+    usedIds.push(current.id);
     answered = false;
 
     $("topic").textContent = current.t;
@@ -161,6 +167,7 @@
   function openLesson(chapter) {
     selected = chapter;
     lastId = "";
+    usedIds = [];
 
     $("bookScreen").classList.add("hidden");
     $("lessonScreen").classList.remove("hidden");
